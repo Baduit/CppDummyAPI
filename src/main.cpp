@@ -83,6 +83,12 @@ int main()
 			}	
 		});
 
+	server.set_error_handler(
+		[](const auto& req, auto& res)
+		{
+			res.set_content("<p>Error Status: <span style='color:red;'>" + std::to_string(res.status) + "</span></p>", "text/html");
+		});
+
 	server.set_exception_handler(
 		[](const httplib::Request& req, httplib::Response& res, std::exception& e)
 		{
