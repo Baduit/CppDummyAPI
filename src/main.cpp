@@ -20,7 +20,6 @@ int main()
 	std::vector<Element> data;
 
 	httplib::Server server;
-	//
 	server.Get("/data",
 		[&](const httplib::Request& req, httplib::Response& res)
 		{
