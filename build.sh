@@ -1,0 +1,1 @@
+g++ ./src/main.cpp -I ./src -std=c++14 -lpthread -o api.out
