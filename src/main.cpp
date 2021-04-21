@@ -3,8 +3,8 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "httplib.h"
-#include "nlohmann/json.hpp"
+#include <httplib.h>
+#include <nlohmann/json.hpp>
 
 using nlohmann::json;
 
@@ -21,7 +21,7 @@ int main()
 
 	httplib::Server server;
 	server.Get("/data",
-		[&](const httplib::Request& req, httplib::Response& res)
+		[&](const httplib::Request&, httplib::Response& res)
 		{
 			res.set_content(json(data).dump(4), "application/json");
 		});
@@ -83,13 +83,13 @@ int main()
 		});
 
 	server.set_error_handler(
-		[](const auto& req, auto& res)
+		[](const auto&, auto& res)
 		{
 			res.set_content("<p>Error Status: <span style='color:red;'>" + std::to_string(res.status) + "</span></p>", "text/html");
 		});
 
 	server.set_exception_handler(
-		[](const httplib::Request& req, httplib::Response& res, std::exception& e)
+		[](const httplib::Request&, httplib::Response& res, std::exception& e)
 		{
 			using namespace std::string_literals;
 			res.set_content("<h1>Error 500</h1><p>"s + e.what() + "</p>", "text/html");

@@ -11,6 +11,7 @@ target_compile_features(api PRIVATE cxx_std_14)
 target_compile_options(api
                        PRIVATE
                        $<$<CXX_COMPILER_ID:MSVC>:/W3 /permissive- /TP>
-                       $<$<CXX_COMPILER_ID:GNU>:-Wextra -Wall -Wsign-conversion -Wfloat-equal -pedantic -Wredundant-decls -Wshadow -Wpointer-arith -O2>)
+                       $<$<CXX_COMPILER_ID:GNU>:-Wextra -Wall -Wsign-conversion -pedantic -Wredundant-decls -Wpointer-arith -O2>)
 
-target_include_directories(api PUBLIC ${CMAKE_CURRENT_LIST_DIR}/src)
+target_link_libraries(api PRIVATE Threads::Threads)
+target_include_directories(api PRIVATE ${CMAKE_CURRENT_LIST_DIR}/src)
