@@ -57,6 +57,11 @@ elseif(PACKAGE_MANAGER STREQUAL "CPM")
     )
     target_include_directories(api PRIVATE ${cpp_httplib_SOURCE_DIR})
 
+elseif(PACKAGE_MANAGER STREQUAL "CONAN")
+    include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+    conan_basic_setup()
+    target_link_libraries(api PRIVATE ${CONAN_LIBS})
+
 else()
     message(SEND_ERROR ${PACKAGE_MANAGER} " is not supported")
 endif()
