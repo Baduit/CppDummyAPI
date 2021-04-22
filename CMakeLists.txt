@@ -7,7 +7,7 @@ find_package(Threads REQUIRED)
 option(PACKAGE_MANAGER "PACKAGE_MANAGER" "NONE")
 
 add_executable(api ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp)
-target_compile_features(api PRIVATE cxx_std_14)
+target_compile_features(api PRIVATE cxx_std_17)
 target_compile_options(api
                        PRIVATE
                        $<$<CXX_COMPILER_ID:MSVC>:/W3 /permissive- /TP>

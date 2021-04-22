@@ -1,1 +1,1 @@
-g++ ./src/main.cpp -I ./src -std=c++14 -lpthread -o api.out
+g++ ./src/main.cpp -I ./src -std=c++17 -lpthread -o api.out

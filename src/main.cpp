@@ -1,7 +1,9 @@
+#include <cctype>
 #include <string>
 #include <vector>
 #include <cstdlib>
 #include <algorithm>
+#include <optional>
 
 #include <httplib.h>
 #include <nlohmann/json.hpp>
@@ -15,29 +17,50 @@ struct Element
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Element, id, message)
 
+std::optional<int> parse_int(const std::string& str)
+{
+	auto id_digit = [](char c) { return std::isdigit(c); };
+	auto it = std::find_if_not(str.cbegin(), str.cend(), id_digit);
+	if (it == str.cend())
+		return atoi(str.c_str());
+	else
+		return {};
+}
+
 int main()
 {
 	std::vector<Element> data;
 
 	httplib::Server server;
 	server.Get("/data",
-		[&](const httplib::Request&, httplib::Response& res)
-		{
-			res.set_content(json(data).dump(4), "application/json");
-		});
-	server.Get(R"(/data/(\d+))",
 		[&](const httplib::Request& req, httplib::Response& res)
 		{
-			int id = std::atoi(req.matches[1].str().data());
-			auto it = std::find_if(data.cbegin(), data.cend(), [id](const auto& e) { return e.id == id; });
-			if (it != data.cend())
+			if (req.has_param("id"))
 			{
-				res.set_content(json(*it).dump(4), "application/json");
+				std::string id_param = req.get_param_value("id");
+				auto id = parse_int(id_param);
+				if (id)
+				{
+					auto it = std::find_if(data.begin(), data.end(), [id](const auto& e) { return e.id == *id; });
+					if (it != data.end())
+					{
+						res.set_content(json(*it).dump(4), "application/json");
+					}
+					else
+					{
+						res.set_content("Element with the id " + id_param + " does not exist.", "text/plain");
+						res.status = 400;
+					}
+				}
+				else
+				{
+					res.set_content(id_param + " is not a valid id, please use a number", "text/plain");
+					res.status = 400;
+				}
 			}
 			else
 			{
-				res.set_content("Element does not exist.", "text/plain");
-				res.status = 404;
+				res.set_content(json(data).dump(4), "application/json");
 			}
 		});
 	server.Post("/data",
@@ -85,7 +108,10 @@ int main()
 	server.set_error_handler(
 		[](const auto&, auto& res)
 		{
-			res.set_content("<p>Error Status: <span style='color:red;'>" + std::to_string(res.status) + "</span></p>", "text/html");
+			if (res.body.empty())
+				res.set_content("<p>Error Status: <span style='color:red;'>" + std::to_string(res.status) + "</span></p>", "text/html");
+			else
+				res.set_content("<p>Error Status: <span style='color:red;'>" + std::to_string(res.status) + "</span></br> Error message: " + res.body + " </p>", "text/html");
 		});
 
 	server.set_exception_handler(
