@@ -114,13 +114,5 @@ int main()
 				res.set_content("<p>Error Status: <span style='color:red;'>" + std::to_string(res.status) + "</span></br> Error message: " + res.body + " </p>", "text/html");
 		});
 
-	server.set_exception_handler(
-		[](const httplib::Request&, httplib::Response& res, std::exception& e)
-		{
-			using namespace std::string_literals;
-			res.set_content("<h1>Error 500</h1><p>"s + e.what() + "</p>", "text/html");
-			res.status = 500;
-		});
-
 	server.listen("0.0.0.0", 6579);
 }

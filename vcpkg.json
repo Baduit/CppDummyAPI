@@ -1,0 +1,12 @@
+{
+	"name": "cpp-dummy-api",
+	"version": "1.0.0",
+	"maintainers": [
+		"Baduit <lena.bertho@protonmail.com>"
+	],
+	"description": "A dummy projet to show that making a REST API in C++ is not difficult.",
+	"dependencies": [
+		"nlohmann-json",
+		"cpp-httplib"
+	]
+}
